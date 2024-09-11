@@ -1,0 +1,122 @@
+.detail {
+    flex: 1;
+
+    .user {
+        padding: 30px 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+        border-bottom: 1px solid #dddddd35;
+
+        img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        h2 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        p {
+            font-size: 16px;
+            color: #fff;
+        }
+    }
+
+    .info {
+        padding: 20px;
+
+        .option {
+            padding: 15px 0;
+            border-bottom: 1px solid #dddddd35;
+
+            .title {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+
+                span {
+                    font-size: 18px;
+                    font-weight: 500;
+                }
+
+                img {
+                    width: 20px;
+                    height: 20px;
+                    cursor: pointer;
+                }
+            }
+
+            .photos {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 10px;
+                margin-top: 20px;
+
+                .photoItem {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    width: 100%;
+                    padding: 10px 0;
+
+                    .photoDetail {
+                        display: flex;
+                        gap: 10px;
+                        align-items: center;
+
+                        img {
+                            width: 30px;
+                            height: 30px;
+                            object-fit: cover;
+                            border-radius: 5px;
+                        }
+
+                        span {
+                            font-size: 14px;
+                            color: lightgray;
+                            font-weight: bold;
+                        }
+                    }
+
+                    .icon {
+                        width: 40px;
+                        height: 40px;
+                        background-color: rgba(17, 25, 40, 0.3);
+                        padding: 10px;
+                        border-radius: 50%;
+                        cursor: pointer;
+                    }
+                }
+            }
+        }
+    }
+
+    button {
+        padding: 15px;
+        background-color: red;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-top: 5px;
+        margin-left: 20px;
+        width: 420px;
+
+        &:hover {
+            background-color: #000;
+            color: #fff;
+        }
+
+        &.logout {
+            padding: 10px;
+            background-color: blue;
+            margin-top: 25px;
+        }
+    }
+}
