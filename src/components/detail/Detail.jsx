@@ -27,7 +27,7 @@ const Detail = () => {
     return (
         <div className='detail'>
             <div className='user'>
-                <img src={user?.avatar || "public/avatar.png"} alt="" />
+                <img src={user?.avatar || "../../../public/avatar.png"} alt="" />
                 <h2>{user?.username}</h2>
             </div>
 
@@ -36,7 +36,7 @@ const Detail = () => {
                 <div className='option'>
                     <div className='title'>
                         <span>Chat Settings</span>
-                        <img src="public/arrowDown.png" alt="" />
+                        <img src="../../../public/arrowDown.png" alt="" />
                     </div>
                 </div>
             </div>

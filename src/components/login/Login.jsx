@@ -97,7 +97,7 @@ const Login = () => {
                 <h2>Create an Account</h2>
                 <form onSubmit={handleRegister}>
                     <label htmlFor='file'>
-                        <img src={avatar.url || "public/avatar.png"} alt="" />
+                        <img src={avatar.url || "../../../public/avatar.png"} alt="" />
                         Upload an Image
                     </label>
                     <input type="file" id='file' style={{ display: 'none' }} onChange={handleAvatar} />
