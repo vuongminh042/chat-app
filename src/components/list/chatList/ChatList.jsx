@@ -68,7 +68,7 @@ const ChatList = () => {
                     <img src="../../../../public/search.png" alt="" />
                     <input type="text" placeholder='Search...' onChange={(e) => setInput(e.target.value)} />
                 </div>
-                <img src={addMode ? "../../../../public/minus.png" : "../../../../public/plus.png"} alt="" className='add'
+                <img src={addMode ? "public/assets/minus.png" : "public/assets/plus.png"} alt="" className='add'
                     onClick={() => setAddMode((prev) => !prev)} />
             </div>
             <div className="chatListContent">
@@ -78,8 +78,8 @@ const ChatList = () => {
                     >
                         <img
                             src={chat.user.blocked.includes(currentUser.id)
-                                ? "../../../../public/avatar.png"
-                                : chat.user.avatar || "../../../../public/avatar.png"
+                                ? "public/assets/avatar.png"
+                                : chat.user.avatar || "public/assets/avatar.png"
                             }
                             alt="" />
                         <div className='texts'>

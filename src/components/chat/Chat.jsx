@@ -54,16 +54,16 @@ const Chat = () => {
 
     // Hàm chỉnh sửa tin nhắn
     const handleEditMessage = (message) => {
-        setText(message.text);  // Đặt nội dung tin nhắn vào ô nhập văn bản
-        setIsEditing(true); // Đặt trạng thái chỉnh sửa
-        setEditingMessage(message); // Gán tin nhắn đang chỉnh sửa
+        setText(message.text);
+        setIsEditing(true);
+        setEditingMessage(message);
     };
 
     // Hàm xóa tin nhắn
     const handleDeleteMessage = async (message) => {
         try {
             await updateDoc(doc(db, "chats", chatId), {
-                messages: arrayRemove(message) // Xóa tin nhắn khỏi Firebase
+                messages: arrayRemove(message)
             });
         } catch (error) {
             console.log(error);
@@ -80,13 +80,12 @@ const Chat = () => {
                 imgUrl = await upload(img.file);
             }
 
-            // Nếu đang chỉnh sửa tin nhắn
             if (isEditing && editingMessage) {
                 const updatedMessages = chat.messages.map((msg) =>
                     msg.createdAt === editingMessage.createdAt ? { ...msg, text } : msg
                 );
                 await updateDoc(doc(db, "chats", chatId), { messages: updatedMessages });
-                setIsEditing(false); // Kết thúc quá trình chỉnh sửa
+                setIsEditing(false);
                 setEditingMessage(null);
             } else {
                 // Gửi tin nhắn mới
@@ -100,7 +99,6 @@ const Chat = () => {
                 });
             }
 
-            // Cập nhật thông tin chat cho người dùng
             const userIDs = [currentUser.id, user.id];
             userIDs.forEach(async (id) => {
                 const userChatsRef = doc(db, "userchats", id);
@@ -136,15 +134,15 @@ const Chat = () => {
         <div className='chat'>
             <div className='top'>
                 <div className='user'>
-                    <img src={user?.avatar || "../../../public/avatar.png"} alt="" />
+                    <img src={user?.avatar || "public/assets/avatar.png"} alt="" />
                     <div className='texts'>
                         <span>{user?.username}</span>
                     </div>
                 </div>
                 <div className='icons'>
-                    <img src="../../../public/phone.png" alt="" />
-                    <img src="../../../public/video.png" alt="" />
-                    <img src="../../../public/info.png" alt="" />
+                    <img src="public/assets/phone.png" alt="" />
+                    <img src="public/assets/video.png" alt="" />
+                    <img src="public/assets/info.png" alt="" />
                 </div>
             </div>
             <div className='center'>
@@ -154,7 +152,6 @@ const Chat = () => {
                             {message.img && <img src={message.img} alt="" />}
                             <p>{message.text}</p>
 
-                            {/* Nút Edit và Delete chỉ hiển thị với tin nhắn của người dùng */}
                             {message.senderId === currentUser?.id && (
                                 <div className="message-actions">
                                     <button onClick={() => handleEditMessage(message)}>Edit</button>
@@ -174,11 +171,11 @@ const Chat = () => {
             <div className='bottom'>
                 <div className='icons'>
                     <label htmlFor='file'>
-                        <img src="../../../public/img.png" alt="" />
+                        <img src="public/assets/img.png" alt="" />
                     </label>
                     <input type="file" id='file' style={{ display: 'none' }} onChange={handleImg} />
-                    <img src="../../../public/camera.png" alt="" />
-                    <img src="../../../public/mic.png" alt="" />
+                    <img src="public/assets/camera.png" alt="" />
+                    <img src="public/assets/mic.png" alt="" />
                 </div>
                 <input type="text" placeholder={(isCurrentUserBlocked || isReceiverBlocked) ? "You can not message" : "Type a message"}
                     value={text}
@@ -186,7 +183,7 @@ const Chat = () => {
                     disabled={isCurrentUserBlocked || isReceiverBlocked}
                 />
                 <div className='emoji'>
-                    <img src="public/emoji.png" alt="" onClick={() => setOpen((prev) => !prev)} />
+                    <img src="public/assets/emoji.png" alt="" onClick={() => setOpen((prev) => !prev)} />
                     <div className='picker'>
                         <EmojiPicker open={open} onEmojiClick={handleEmoji} />
                     </div>
