@@ -1,3 +1,46 @@
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    background-color: #1f2937;
+}
+
+.menu-icon {
+    font-size: 24px;
+    color: white;
+    cursor: pointer;
+}
+
+.menu {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 200px;
+    height: 100vh;
+    background-color: #4F46E5;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.menu ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.menu li {
+    color: white;
+    padding: 10px 0;
+    border-bottom: 1px solid white;
+    cursor: pointer;
+}
+
+.menu li:hover {
+    background-color: #6366f1;
+}
+
 .chatList {
     flex: 1;
     overflow-y: auto;

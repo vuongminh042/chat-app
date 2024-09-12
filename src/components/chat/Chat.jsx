@@ -16,8 +16,8 @@ const Chat = () => {
         url: ""
     });
 
-    const [isEditing, setIsEditing] = useState(false); // Để theo dõi trạng thái chỉnh sửa
-    const [editingMessage, setEditingMessage] = useState(null); // Tin nhắn đang được chỉnh sửa
+    const [isEditing, setIsEditing] = useState(false);
+    const [editingMessage, setEditingMessage] = useState(null);
 
     const { currentUser } = useUserStore();
     const { chatId, user, isCurrentUserBlocked, isReceiverBlocked } = useChatStore();
@@ -134,15 +134,15 @@ const Chat = () => {
         <div className='chat'>
             <div className='top'>
                 <div className='user'>
-                    <img src={user?.avatar || "public/assets/avatar.png"} alt="" />
+                    <img src={user?.avatar || "https://firebasestorage.googleapis.com/v0/b/reactchat-2968d.appspot.com/o/image-project%2Favatar.png?alt=media&token=a68ba9cf-5407-4d96-b4fc-9d769ebe78b8"} alt="" />
                     <div className='texts'>
                         <span>{user?.username}</span>
                     </div>
                 </div>
                 <div className='icons'>
-                    <img src="public/assets/phone.png" alt="" />
-                    <img src="public/assets/video.png" alt="" />
-                    <img src="public/assets/info.png" alt="" />
+                    <img src="https://firebasestorage.googleapis.com/v0/b/reactchat-2968d.appspot.com/o/image-project%2Fphone.png?alt=media&token=c9881096-413d-4452-82f3-9d533671f341" alt="" />
+                    <img src="https://firebasestorage.googleapis.com/v0/b/reactchat-2968d.appspot.com/o/image-project%2Fvideo.png?alt=media&token=797830eb-5bc5-492b-ae63-cd461d34e3a7" alt="" />
+                    <img src="https://firebasestorage.googleapis.com/v0/b/reactchat-2968d.appspot.com/o/image-project%2Finfo.png?alt=media&token=447088c4-87ff-4eeb-9767-3798a15c64a5" alt="" />
                 </div>
             </div>
             <div className='center'>
@@ -171,11 +171,11 @@ const Chat = () => {
             <div className='bottom'>
                 <div className='icons'>
                     <label htmlFor='file'>
-                        <img src="public/assets/img.png" alt="" />
+                        <img src="https://firebasestorage.googleapis.com/v0/b/reactchat-2968d.appspot.com/o/image-project%2Fimg.png?alt=media&token=5be4cca7-3384-41b0-89d8-c82d412c2a68" alt="" />
                     </label>
                     <input type="file" id='file' style={{ display: 'none' }} onChange={handleImg} />
-                    <img src="public/assets/camera.png" alt="" />
-                    <img src="public/assets/mic.png" alt="" />
+                    <img src="https://firebasestorage.googleapis.com/v0/b/reactchat-2968d.appspot.com/o/image-project%2Fcamera.png?alt=media&token=c8375474-d22c-4adf-a809-63a1000a11a2" alt="" />
+                    <img src="https://firebasestorage.googleapis.com/v0/b/reactchat-2968d.appspot.com/o/image-project%2Fmic.png?alt=media&token=86d4290a-4ec2-4fa1-a1af-6f69a25fc39c" alt="" />
                 </div>
                 <input type="text" placeholder={(isCurrentUserBlocked || isReceiverBlocked) ? "You can not message" : "Type a message"}
                     value={text}
@@ -183,7 +183,7 @@ const Chat = () => {
                     disabled={isCurrentUserBlocked || isReceiverBlocked}
                 />
                 <div className='emoji'>
-                    <img src="public/assets/emoji.png" alt="" onClick={() => setOpen((prev) => !prev)} />
+                    <img src="https://firebasestorage.googleapis.com/v0/b/reactchat-2968d.appspot.com/o/image-project%2Femoji.png?alt=media&token=847f34bd-e382-4cfa-903a-b1ede46ebec3" alt="" onClick={() => setOpen((prev) => !prev)} />
                     <div className='picker'>
                         <EmojiPicker open={open} onEmojiClick={handleEmoji} />
                     </div>

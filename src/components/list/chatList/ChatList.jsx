@@ -65,11 +65,14 @@ const ChatList = () => {
         <div className="chatList">
             <div className='search'>
                 <div className='searchBar'>
-                    <img src="../../../../public/search.png" alt="" />
+                    <img src="https://firebasestorage.googleapis.com/v0/b/reactchat-2968d.appspot.com/o/image-project%2Fsearch.png?alt=media&token=ee96d7b2-e2b6-48ec-90cd-89fb3afe9e97" alt="" />
                     <input type="text" placeholder='Search...' onChange={(e) => setInput(e.target.value)} />
                 </div>
-                <img src={addMode ? "public/assets/minus.png" : "public/assets/plus.png"} alt="" className='add'
-                    onClick={() => setAddMode((prev) => !prev)} />
+                <img src={addMode ? "https://firebasestorage.googleapis.com/v0/b/reactchat-2968d.appspot.com/o/image-project%2Fminus.png?alt=media&token=14dba43c-c5e3-4261-b59b-2ee59e72af80"
+                    : "https://firebasestorage.googleapis.com/v0/b/reactchat-2968d.appspot.com/o/image-project%2Fplus.png?alt=media&token=2c1f61da-1500-4256-a913-9512cc0d784e"}
+                    alt="" className='add'
+                    onClick={() => setAddMode((prev) => !prev)}
+                />
             </div>
             <div className="chatListContent">
                 {filteredChats.map((chat) => (
@@ -78,8 +81,8 @@ const ChatList = () => {
                     >
                         <img
                             src={chat.user.blocked.includes(currentUser.id)
-                                ? "public/assets/avatar.png"
-                                : chat.user.avatar || "public/assets/avatar.png"
+                                ? "https://firebasestorage.googleapis.com/v0/b/reactchat-2968d.appspot.com/o/image-project%2Favatar.png?alt=media&token=a68ba9cf-5407-4d96-b4fc-9d769ebe78b8"
+                                : chat.user.avatar || "https://firebasestorage.googleapis.com/v0/b/reactchat-2968d.appspot.com/o/image-project%2Favatar.png?alt=media&token=a68ba9cf-5407-4d96-b4fc-9d769ebe78b8"
                             }
                             alt="" />
                         <div className='texts'>
