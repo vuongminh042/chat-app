@@ -166,27 +166,27 @@ const Chat = () => {
                 </div>}
                 <div ref={endRef}></div>
             </div>
-            <div className='bottom'>
+            <div className='bottom' style={{ marginLeft: '-35px' }}>
                 <div className='icons'>
                     <label htmlFor='file'>
                         <img src="https://firebasestorage.googleapis.com/v0/b/reactchat-2968d.appspot.com/o/image-project%2Fimg.png?alt=media&token=5be4cca7-3384-41b0-89d8-c82d412c2a68" alt="" />
                     </label>
                     <input type="file" id='file' style={{ display: 'none' }} onChange={handleImg} />
                 </div>
-                <input type="text" placeholder={(isCurrentUserBlocked || isReceiverBlocked) ? "You can not message" : "Type a message"}
-                    value={text}
-                    onChange={(e) => setText(e.target.value)}
-                    disabled={isCurrentUserBlocked || isReceiverBlocked}
-                />
-                <div className='emoji'>
+                <div className='emoji' style={{ marginLeft: '-5px' }}>
                     <img src="https://firebasestorage.googleapis.com/v0/b/reactchat-2968d.appspot.com/o/image-project%2Femoji.png?alt=media&token=847f34bd-e382-4cfa-903a-b1ede46ebec3" alt="" onClick={() => setOpen((prev) => !prev)} />
                     <div className='picker'>
                         <EmojiPicker open={open} onEmojiClick={handleEmoji} />
                     </div>
                 </div>
-                <br />
+                <input type="text" placeholder={(isCurrentUserBlocked || isReceiverBlocked) ? "You can not message" : "Type a message"}
+                    value={text}
+                    onChange={(e) => setText(e.target.value)}
+                    disabled={isCurrentUserBlocked || isReceiverBlocked}
+                    style={{ marginLeft: '-10px' }}
+                />
                 <button className='sendButton' onClick={handleSend} disabled={isCurrentUserBlocked || isReceiverBlocked}
-
+                    style={{ marginLeft: '-13px' }}
                 >
                     {isEditing ? "Update" : "Send"}
                 </button>
