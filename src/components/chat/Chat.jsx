@@ -172,8 +172,6 @@ const Chat = () => {
                         <img src="https://firebasestorage.googleapis.com/v0/b/reactchat-2968d.appspot.com/o/image-project%2Fimg.png?alt=media&token=5be4cca7-3384-41b0-89d8-c82d412c2a68" alt="" />
                     </label>
                     <input type="file" id='file' style={{ display: 'none' }} onChange={handleImg} />
-                    <img src="https://firebasestorage.googleapis.com/v0/b/reactchat-2968d.appspot.com/o/image-project%2Fcamera.png?alt=media&token=c8375474-d22c-4adf-a809-63a1000a11a2" alt="" />
-                    <img src="https://firebasestorage.googleapis.com/v0/b/reactchat-2968d.appspot.com/o/image-project%2Fmic.png?alt=media&token=86d4290a-4ec2-4fa1-a1af-6f69a25fc39c" alt="" />
                 </div>
                 <input type="text" placeholder={(isCurrentUserBlocked || isReceiverBlocked) ? "You can not message" : "Type a message"}
                     value={text}
