@@ -141,8 +141,6 @@ const Chat = () => {
                 </div>
                 <div className='icons'>
                     <img src="https://firebasestorage.googleapis.com/v0/b/reactchat-2968d.appspot.com/o/image-project%2Fphone.png?alt=media&token=c9881096-413d-4452-82f3-9d533671f341" alt="" />
-                    <img src="https://firebasestorage.googleapis.com/v0/b/reactchat-2968d.appspot.com/o/image-project%2Fvideo.png?alt=media&token=797830eb-5bc5-492b-ae63-cd461d34e3a7" alt="" />
-                    <img src="https://firebasestorage.googleapis.com/v0/b/reactchat-2968d.appspot.com/o/image-project%2Finfo.png?alt=media&token=447088c4-87ff-4eeb-9767-3798a15c64a5" alt="" />
                 </div>
             </div>
             <div className='center'>
