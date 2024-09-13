@@ -147,23 +147,3 @@
     color: rgba(255, 255, 255, 0.7);
     margin: 0;
 }
-
-@media screen and (max-width: 768px) {
-    .item {
-        padding: 10px;
-        gap: 10px;
-    }
-
-    .item img {
-        width: 40px;
-        height: 40px;
-    }
-
-    .texts span {
-        font-size: 14px;
-    }
-
-    .texts p {
-        font-size: 12px;
-    }
-}
