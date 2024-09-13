@@ -35,13 +35,23 @@ const Login = () => {
         url: ""
     });
 
-    const [loading, setLoading] = useState(false);
+    // Tạo hai biến loading riêng biệt
+    const [loadingLogin, setLoadingLogin] = useState(false);
+    const [loadingSignUp, setLoadingSignUp] = useState(false);
 
+    // useForm for login
     const {
-        register,
-        handleSubmit,
-        formState: { errors },
-        setValue
+        register: registerLogin,
+        handleSubmit: handleSubmitLogin,
+        formState: { errors: loginErrors }
+    } = useForm();
+
+    // useForm for sign up
+    const {
+        register: registerSignUp,
+        handleSubmit: handleSubmitSignUp,
+        formState: { errors: signUpErrors },
+        setValue: setValueSignUp
     } = useForm({
         resolver: yupResolver(validationSchema)
     });
@@ -52,12 +62,12 @@ const Login = () => {
                 file: e.target.files[0],
                 url: URL.createObjectURL(e.target.files[0])
             });
-            setValue('file', e.target.files[0]); // Set avatar as file for validation
+            setValueSignUp('file', e.target.files[0]); // Set avatar as file for validation in sign up form
         }
     };
 
     const handleRegister = async (data) => {
-        setLoading(true);
+        setLoadingSignUp(true); // Dùng loading riêng cho Sign Up
 
         const { username, email, password } = data;
 
@@ -83,12 +93,12 @@ const Login = () => {
             console.log(error);
             toast.error('Sign up Failed ❎');
         } finally {
-            setLoading(false);
+            setLoadingSignUp(false); // Reset loading
         }
     };
 
     const handleLogin = async (data) => {
-        setLoading(true);
+        setLoadingLogin(true); // Dùng loading riêng cho Login
 
         const { email, password } = data;
 
@@ -99,37 +109,41 @@ const Login = () => {
             console.log(error);
             toast.error('Login Failed ❎');
         } finally {
-            setLoading(false);
+            setLoadingLogin(false); // Reset loading
         }
     };
 
     return (
         <div className="login">
+            {/* Form đăng nhập */}
             <div className='item'>
                 <h2>Welcome back</h2>
-                <form onSubmit={handleSubmit(handleLogin)}>
+                <form onSubmit={handleSubmitLogin(handleLogin)}>
                     <input
                         type="email"
                         placeholder='Enter your email'
-                        {...register('email')}
+                        {...registerLogin('email')}
                     />
-                    {errors.email && <p className='error-message'>{errors.email.message}</p>}
+                    {loginErrors.email && <p className='error-message'>{loginErrors.email.message}</p>}
                     <input
                         type="password"
                         placeholder='Enter your password'
-                        {...register('password')}
+                        {...registerLogin('password')}
                     />
-                    {errors.password && <p className='error-message'>{errors.password.message}</p>}
-                    <button disabled={loading}>{loading ? "Loading" : "Login"}</button>
+                    {loginErrors.password && <p className='error-message'>{loginErrors.password.message}</p>}
+                    <button type="submit" disabled={loadingLogin}>{loadingLogin ? "Loading" : "Login"}</button>
                 </form>
             </div>
+
             <div className='separator'></div>
+
+            {/* Form đăng ký */}
             <div className='item'>
                 <h2>Create an Account</h2>
-                <form onSubmit={handleSubmit(handleRegister)}>
+                <form onSubmit={handleSubmitSignUp(handleRegister)}>
                     <label htmlFor='file'>
                         <img src={avatar.url || "https://firebasestorage.googleapis.com/v0/b/reactchat-2968d.appspot.com/o/image-project%2Favatar.png?alt=media&token=a68ba9cf-5407-4d96-b4fc-9d769ebe78b8"}
-                            alt=""
+                            alt="Avatar"
                         />
                         Upload an Image
                     </label>
@@ -139,26 +153,26 @@ const Login = () => {
                         style={{ display: 'none' }}
                         onChange={handleAvatar}
                     />
-                    {errors.file && <p className='error-message'>{errors.file.message}</p>}
+                    {signUpErrors.file && <p className='error-message'>{signUpErrors.file.message}</p>}
                     <input
                         type="text"
                         placeholder='Enter your username'
-                        {...register('username')}
+                        {...registerSignUp('username')}
                     />
-                    {errors.username && <p className='error-message'>{errors.username.message}</p>}
+                    {signUpErrors.username && <p className='error-message'>{signUpErrors.username.message}</p>}
                     <input
                         type="email"
                         placeholder='Enter your email'
-                        {...register('email')}
+                        {...registerSignUp('email')}
                     />
-                    {errors.email && <p className='error-message'>{errors.email.message}</p>}
+                    {signUpErrors.email && <p className='error-message'>{signUpErrors.email.message}</p>}
                     <input
                         type="password"
                         placeholder='Enter your password'
-                        {...register('password')}
+                        {...registerSignUp('password')}
                     />
-                    {errors.password && <p className='error-message'>{errors.password.message}</p>}
-                    <button disabled={loading}>{loading ? "Loading" : "Sign Up"}</button>
+                    {signUpErrors.password && <p className='error-message'>{signUpErrors.password.message}</p>}
+                    <button type="submit" disabled={loadingSignUp}>{loadingSignUp ? "Loading" : "Sign Up"}</button>
                 </form>
             </div>
         </div>
