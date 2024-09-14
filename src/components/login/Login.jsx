@@ -9,7 +9,8 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as Yup from 'yup';
 
-const validationSchema = Yup.object().shape({
+// Validation schema for sign up
+const signUpSchema = Yup.object().shape({
     username: Yup.string()
         .required('Username is required')
         .min(5, 'Username must be at least 5 characters long')
@@ -29,31 +30,46 @@ const validationSchema = Yup.object().shape({
     }),
 });
 
+// Validation schema for login
+const loginSchema = Yup.object().shape({
+    email: Yup.string()
+        .required('Email is required')
+        .email('Email is invalid'),
+    password: Yup.string()
+        .required('Password is required')
+        .min(8, 'Password must be at least 8 characters')
+        .matches(/[A-Z]/, 'Password must contain at least one uppercase letter')
+        .matches(/[a-z]/, 'Password must contain at least one lowercase letter')
+        .matches(/[0-9]/, 'Password must contain at least one number')
+        .matches(/[\W_]/, 'Password must contain at least one special character'),
+});
+
 const Login = () => {
     const [avatar, setAvatar] = useState({
         file: null,
         url: ""
     });
 
-    // Tạo hai biến loading riêng biệt
     const [loadingLogin, setLoadingLogin] = useState(false);
     const [loadingSignUp, setLoadingSignUp] = useState(false);
 
-    // useForm for login
+    // useForm for login with validation schema
     const {
         register: registerLogin,
         handleSubmit: handleSubmitLogin,
         formState: { errors: loginErrors }
-    } = useForm();
+    } = useForm({
+        resolver: yupResolver(loginSchema)
+    });
 
-    // useForm for sign up
+    // useForm for sign up with validation schema
     const {
         register: registerSignUp,
         handleSubmit: handleSubmitSignUp,
         formState: { errors: signUpErrors },
         setValue: setValueSignUp
     } = useForm({
-        resolver: yupResolver(validationSchema)
+        resolver: yupResolver(signUpSchema)
     });
 
     const handleAvatar = e => {
@@ -67,7 +83,7 @@ const Login = () => {
     };
 
     const handleRegister = async (data) => {
-        setLoadingSignUp(true); // Dùng loading riêng cho Sign Up
+        setLoadingSignUp(true);
 
         const { username, email, password } = data;
 
@@ -93,12 +109,12 @@ const Login = () => {
             console.log(error);
             toast.error('Sign up Failed ❎');
         } finally {
-            setLoadingSignUp(false); // Reset loading
+            setLoadingSignUp(false);
         }
     };
 
     const handleLogin = async (data) => {
-        setLoadingLogin(true); // Dùng loading riêng cho Login
+        setLoadingLogin(true);
 
         const { email, password } = data;
 
@@ -109,7 +125,7 @@ const Login = () => {
             console.log(error);
             toast.error('Login Failed ❎');
         } finally {
-            setLoadingLogin(false); // Reset loading
+            setLoadingLogin(false);
         }
     };
 
