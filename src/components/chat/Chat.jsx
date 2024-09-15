@@ -176,8 +176,8 @@ const Chat = () => {
 
                             {message.senderId === currentUser?.id && (
                                 <div className="message-actions">
-                                    <button onClick={() => handleEditMessage(message)} style={{ backgroundColor: 'blue', color: '#fff', width: 60, height: 30, margin: 5 }}>Edit</button>
-                                    <button onClick={() => handleDeleteMessage(message)} style={{ backgroundColor: 'red', color: '#fff', width: 60, height: 30 }}>Delete</button>
+                                    <button onClick={() => handleEditMessage(message)} style={{ backgroundColor: 'blue', color: '#fff', width: 60, height: 30, margin: 5, display: 'none' }}>Edit</button>
+                                    <button onClick={() => handleDeleteMessage(message)} style={{ backgroundColor: 'red', color: '#fff', width: 60, height: 30, display: 'none' }}>Delete</button>
                                 </div>
                             )}
                         </div>
