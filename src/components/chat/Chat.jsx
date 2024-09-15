@@ -25,25 +25,44 @@ const Chat = () => {
     const endRef = useRef(null);
 
     useEffect(() => {
-        endRef.current?.scrollIntoView({ behavior: 'smooth' });
-    }, []);
-
-    useEffect(() => {
         const unSub = onSnapshot(doc(db, "chats", chatId), (res) => {
-            setChat(res.data());
+            const chatData = res.data();
+            setChat(chatData);
+
+            if (chatData?.messages?.length > 0) {
+                const unreadMessages = chatData.messages.filter(
+                    (message) => message.senderId !== currentUser.id && !message.isSeen
+                );
+
+                if (unreadMessages.length > 0) {
+                    setTimeout(() => {
+                        const updatedMessages = chatData.messages.map((message) => {
+                            if (message.senderId !== currentUser.id && !message.isSeen) {
+                                return { ...message, isSeen: true };
+                            }
+                            return message;
+                        });
+                        updateDoc(doc(db, "chats", chatId), { messages: updatedMessages }).catch((error) => {
+                            console.error("Error updating seen status:", error);
+                        });
+                    }, 5000);
+                }
+            }
         });
 
         return () => {
             unSub();
         };
-    }, [chatId]);
+    }, [chatId, currentUser.id]);
 
-    const handleEmoji = e => {
+
+
+    const handleEmoji = (e) => {
         setText((prev) => prev + e.emoji);
         setOpen(false);
     };
 
-    const handleImg = e => {
+    const handleImg = (e) => {
         if (e.target.files[0]) {
             setImg({
                 file: e.target.files[0],
@@ -52,14 +71,12 @@ const Chat = () => {
         }
     };
 
-    // Hàm chỉnh sửa tin nhắn
     const handleEditMessage = (message) => {
         setText(message.text);
         setIsEditing(true);
         setEditingMessage(message);
     };
 
-    // Hàm xóa tin nhắn
     const handleDeleteMessage = async (message) => {
         try {
             await updateDoc(doc(db, "chats", chatId), {
@@ -94,6 +111,7 @@ const Chat = () => {
                         senderId: currentUser.id,
                         text,
                         createdAt: new Date(),
+                        isSeen: false,
                         ...(imgUrl && { img: imgUrl })
                     })
                 });
@@ -130,6 +148,7 @@ const Chat = () => {
         setText("");
     };
 
+
     return (
         <div className='chat'>
             <div className='top'>
@@ -151,11 +170,14 @@ const Chat = () => {
                         <div className='texts'>
                             {message.img && <img src={message.img} alt="" />}
                             <p>{message.text}</p>
+                            <span className="status">
+                                {message.isSeen ? '✔✔ Đã nhận' : '✔ Đã gửi'}
+                            </span>
 
                             {message.senderId === currentUser?.id && (
                                 <div className="message-actions">
-                                    <button onClick={() => handleEditMessage(message)}>Edit</button>
-                                    <button onClick={() => handleDeleteMessage(message)}>Delete</button>
+                                    <button onClick={() => handleEditMessage(message)} style={{ backgroundColor: 'blue', color: '#fff', width: 60, height: 30, margin: 5 }}>Edit</button>
+                                    <button onClick={() => handleDeleteMessage(message)} style={{ backgroundColor: 'red', color: '#fff', width: 60, height: 30 }}>Delete</button>
                                 </div>
                             )}
                         </div>
@@ -168,6 +190,7 @@ const Chat = () => {
                 </div>}
                 <div ref={endRef}></div>
             </div>
+
             <div className='bottom'>
                 <div className='icons'>
                     <label htmlFor='file'>
@@ -176,23 +199,25 @@ const Chat = () => {
                     <input type="file" id='file' style={{ display: 'none' }} onChange={handleImg} />
                 </div>
 
-                <input type="text" placeholder={(isCurrentUserBlocked || isReceiverBlocked) ? "You can not message" : "Type a message"}
+                <input type="text" placeholder={(isCurrentUserBlocked || isReceiverBlocked) ? "Bạn không thể gửi tin nhắn" : "Nhập tin nhắn..."}
                     value={text}
                     onChange={(e) => setText(e.target.value)}
                     disabled={isCurrentUserBlocked || isReceiverBlocked}
                 />
                 <div className='emoji'>
-                    <img src="https://firebasestorage.googleapis.com/v0/b/reactchat-2968d.appspot.com/o/image-project%2Femoji.png?alt=media&token=847f34bd-e382-4cfa-903a-b1ede46ebec3" alt="" onClick={() => setOpen((prev) => !prev)} />
-                    <div className='picker'>
-                        <EmojiPicker open={open} onEmojiClick={handleEmoji} />
-                    </div>
+                    <img src="https://firebasestorage.googleapis.com/v0/b/reactchat-2968d.appspot.com/o/image-project%2Femoji.png?alt=media&token=847f34bd-e382-4cfa-903d-6b0fcf610b2c" alt="" onClick={() => setOpen(!open)} />
+                    {open && <EmojiPicker onEmojiClick={handleEmoji} />}
                 </div>
-                <button className='sendButton' onClick={handleSend} disabled={isCurrentUserBlocked || isReceiverBlocked}
+                <button
+                    className="sendButton"
+                    onClick={handleSend}
+                    disabled={isCurrentUserBlocked || isReceiverBlocked}
                 >
-                    {isEditing ? "Update" : "Send"}
+                    Send
                 </button>
+
             </div>
-        </div>
+        </div >
     );
 };
 
