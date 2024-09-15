@@ -16,6 +16,8 @@ const Chat = () => {
         url: ""
     });
 
+    const [isTyping, setIsTyping] = useState(false);  // Trạng thái đang soạn tin của người dùng khác
+
     const [isEditing, setIsEditing] = useState(false);
     const [editingMessage, setEditingMessage] = useState(null);
 
@@ -24,11 +26,60 @@ const Chat = () => {
 
     const endRef = useRef(null);
 
+    // Theo dõi khi người dùng nhập liệu và cập nhật trạng thái "đang soạn tin"
+    useEffect(() => {
+        const handleTyping = async () => {
+            const chatRef = doc(db, "chats", chatId);
+            await updateDoc(chatRef, {
+                [`isTyping.${currentUser.uid}`]: {
+                    isTyping: true,
+                    username: currentUser.username
+                }
+            });
+        };
+
+        const handleStopTyping = async () => {
+            const chatRef = doc(db, "chats", chatId);
+            await updateDoc(chatRef, {
+                [`isTyping.${currentUser.uid}`]: {
+                    isTyping: false,
+                    username: currentUser.username
+                }
+            });
+        };
+
+        if (text.length > 0) {
+            handleTyping();
+        } else {
+            handleStopTyping();
+        }
+
+        const timeoutId = setTimeout(() => {
+            if (text.length > 0) {
+                handleStopTyping();
+            }
+        }, 3000); // Sau 3 giây không nhập tin, chuyển trạng thái thành "không soạn tin"
+
+        return () => clearTimeout(timeoutId); // Hủy timeout khi component bị hủy hoặc khi có sự thay đổi
+    }, [text, chatId, currentUser.uid]);
+
+    // Lắng nghe sự thay đổi của "isTyping" từ Firestore
     useEffect(() => {
         const unSub = onSnapshot(doc(db, "chats", chatId), (res) => {
             const chatData = res.data();
             setChat(chatData);
 
+            // Cập nhật trạng thái "đang soạn tin" của người dùng khác
+            if (chatData?.isTyping) {
+                const typingUser = Object.values(chatData.isTyping).find(user => user.isTyping);
+                if (typingUser) {
+                    setIsTyping(typingUser.username);
+                } else {
+                    setIsTyping(false);
+                }
+            }
+
+            // Đánh dấu tin nhắn đã đọc
             if (chatData?.messages?.length > 0) {
                 const unreadMessages = chatData.messages.filter(
                     (message) => message.senderId !== currentUser.id && !message.isSeen
@@ -53,9 +104,7 @@ const Chat = () => {
         return () => {
             unSub();
         };
-    }, [chatId, currentUser.id]);
-
-
+    }, [chatId, currentUser.id, user.uid]);
 
     const handleEmoji = (e) => {
         setText((prev) => prev + e.emoji);
@@ -97,6 +146,16 @@ const Chat = () => {
                 imgUrl = await upload(img.file);
             }
 
+            // Gửi tin nhắn mới
+            const newMessage = {
+                senderId: currentUser.id,
+                text,
+                createdAt: new Date(),
+                isSeen: false,
+                status: 'sent', // Trạng thái ban đầu là đã gửi
+                ...(imgUrl && { img: imgUrl })
+            };
+
             if (isEditing && editingMessage) {
                 const updatedMessages = chat.messages.map((msg) =>
                     msg.createdAt === editingMessage.createdAt ? { ...msg, text } : msg
@@ -105,17 +164,27 @@ const Chat = () => {
                 setIsEditing(false);
                 setEditingMessage(null);
             } else {
-                // Gửi tin nhắn mới
                 await updateDoc(doc(db, "chats", chatId), {
-                    messages: arrayUnion({
-                        senderId: currentUser.id,
-                        text,
-                        createdAt: new Date(),
-                        isSeen: false,
-                        ...(imgUrl && { img: imgUrl })
-                    })
+                    messages: arrayUnion(newMessage)
                 });
             }
+
+            // Cập nhật trạng thái "đã nhận" sau 5-10 giây
+            setTimeout(async () => {
+                const chatRef = doc(db, "chats", chatId);
+                const chatSnapshot = await getDoc(chatRef);
+                const chatData = chatSnapshot.data();
+
+                if (chatData?.messages) {
+                    const updatedMessages = chatData.messages.map((msg) =>
+                        msg.createdAt === newMessage.createdAt
+                            ? { ...msg, status: 'received' }
+                            : msg
+                    );
+
+                    await updateDoc(chatRef, { messages: updatedMessages });
+                }
+            }, 8000); // Thay đổi thời gian theo yêu cầu (8 giây ở đây)
 
             const userIDs = [currentUser.id, user.id];
             userIDs.forEach(async (id) => {
@@ -148,7 +217,6 @@ const Chat = () => {
         setText("");
     };
 
-
     return (
         <div className='chat'>
             <div className='top'>
@@ -166,18 +234,20 @@ const Chat = () => {
             </div>
             <div className='center'>
                 {chat?.messages?.map((message) => (
-                    <div className={message.senderId === currentUser?.id ? "message own" : "message"} key={message?.createdAt}>
+                    <div className={message.senderId === currentUser.id ? "message own" : "message"} key={message?.createdAt}>
                         <div className='texts'>
                             {message.img && <img src={message.img} alt="" />}
                             <p>{message.text}</p>
-                            <span className="status">
-                                {message.isSeen ? '✔✔ Đã nhận' : '✔ Đã gửi'}
-                            </span>
-
-                            {message.senderId === currentUser?.id && (
-                                <div className="message-actions">
-                                    <button onClick={() => handleEditMessage(message)} style={{ backgroundColor: 'blue', color: '#fff', width: 60, height: 30, margin: 5, display: 'none' }}>Edit</button>
-                                    <button onClick={() => handleDeleteMessage(message)} style={{ backgroundColor: 'red', color: '#fff', width: 60, height: 30, display: 'none' }}>Delete</button>
+                        </div>
+                        <div className='bottom'>
+                            <div className='status'>
+                                {message.status === 'received' && <img src="https://firebasestorage.googleapis.com/v0/b/reactchat-2968d.appspot.com/o/image-project%2Fdouble-check.png?alt=media&token=your-token-here" alt="Received" />}
+                                {message.status === 'sent' && <img src="https://firebasestorage.googleapis.com/v0/b/reactchat-2968d.appspot.com/o/image-project%2Fsingle-check.png?alt=media&token=your-token-here" alt="Sent" />}
+                            </div>
+                            {message.senderId === currentUser.id && (
+                                <div className='actions'>
+                                    <button onClick={() => handleEditMessage(message)} style={{ backgroundColor: 'yellow', color: '#000', width: 60, height: 30, margin: 5 }}>Edit</button>
+                                    <button onClick={() => handleDeleteMessage(message)} style={{ backgroundColor: 'red', color: '#fff', width: 60, height: 30 }}>Delete</button>
                                 </div>
                             )}
                         </div>
@@ -205,8 +275,12 @@ const Chat = () => {
                     disabled={isCurrentUserBlocked || isReceiverBlocked}
                 />
                 <div className='emoji'>
-                    <img src="https://firebasestorage.googleapis.com/v0/b/reactchat-2968d.appspot.com/o/image-project%2Femoji.png?alt=media&token=847f34bd-e382-4cfa-903d-6b0fcf610b2c" alt="" onClick={() => setOpen(!open)} />
-                    {open && <EmojiPicker onEmojiClick={handleEmoji} />}
+                    <img
+                        src="https://firebasestorage.googleapis.com/v0/b/reactchat-2968d.appspot.com/o/image-project%2Femoji.png?alt=media&token=847f34bd-e382-4cfa-903d-6b0fcf610b2c"
+                        alt="emoji"
+                        onClick={() => setOpen(!open)}
+                    />
+                    {open && <EmojiPicker className='picker' onEmojiClick={handleEmoji} />}
                 </div>
                 <button
                     className="sendButton"
@@ -215,9 +289,13 @@ const Chat = () => {
                 >
                     Send
                 </button>
-
             </div>
-        </div >
+
+            {/* Hiển thị thông báo đang gõ cho người dùng hiện tại khi người khác đang soạn tin */}
+            {isTyping && !chat?.isTyping[currentUser.id] && (
+                <div className='typing-indicator'>{isTyping} đang soạn tin...</div>
+            )}
+        </div>
     );
 };
 
