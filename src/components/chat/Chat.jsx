@@ -6,7 +6,6 @@ import { db } from '../../lib/firebase';
 import { useChatStore } from '../../lib/chatStore';
 import { useUserStore } from '../../lib/userStore';
 import upload from '../../lib/upload';
-import { Link } from 'react-router-dom';
 
 const Chat = () => {
     const [chat, setChat] = useState();
