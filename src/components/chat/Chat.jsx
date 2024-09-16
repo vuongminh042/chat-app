@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 import './chat.css';
 import EmojiPicker from 'emoji-picker-react';
-import { arrayUnion, arrayRemove, doc, getDoc, onSnapshot, updateDoc } from 'firebase/firestore';
+import { arrayUnion, doc, getDoc, onSnapshot, updateDoc } from 'firebase/firestore';
 import { db } from '../../lib/firebase';
 import { useChatStore } from '../../lib/chatStore';
 import { useUserStore } from '../../lib/userStore';
 import upload from '../../lib/upload';
+import { Link } from 'react-router-dom';
 
 const Chat = () => {
     const [chat, setChat] = useState();
@@ -15,11 +16,7 @@ const Chat = () => {
         file: null,
         url: ""
     });
-
     const [isTyping, setIsTyping] = useState(false);
-
-    const [isEditing, setIsEditing] = useState(false);
-    const [editingMessage, setEditingMessage] = useState(null);
 
     const { currentUser } = useUserStore();
     const { chatId, user, isCurrentUserBlocked, isReceiverBlocked } = useChatStore();
@@ -61,7 +58,6 @@ const Chat = () => {
 
         return () => clearTimeout(timeoutId);
     }, [text, chatId, currentUser.uid]);
-
 
     useEffect(() => {
         const unSub = onSnapshot(doc(db, "chats", chatId), (res) => {
@@ -117,22 +113,6 @@ const Chat = () => {
         }
     };
 
-    const handleEditMessage = (message) => {
-        setText(message.text);
-        setIsEditing(true);
-        setEditingMessage(message);
-    };
-
-    const handleDeleteMessage = async (message) => {
-        try {
-            await updateDoc(doc(db, "chats", chatId), {
-                messages: arrayRemove(message)
-            });
-        } catch (error) {
-            console.log(error);
-        }
-    };
-
     const handleSend = async () => {
         if (text === "") return;
 
@@ -153,18 +133,9 @@ const Chat = () => {
                 ...(imgUrl && { img: imgUrl })
             };
 
-            if (isEditing && editingMessage) {
-                const updatedMessages = chat.messages.map((msg) =>
-                    msg.createdAt === editingMessage.createdAt ? { ...msg, text } : msg
-                );
-                await updateDoc(doc(db, "chats", chatId), { messages: updatedMessages });
-                setIsEditing(false);
-                setEditingMessage(null);
-            } else {
-                await updateDoc(doc(db, "chats", chatId), {
-                    messages: arrayUnion(newMessage)
-                });
-            }
+            await updateDoc(doc(db, "chats", chatId), {
+                messages: arrayUnion(newMessage)
+            });
 
             setTimeout(async () => {
                 const chatRef = doc(db, "chats", chatId);
@@ -217,7 +188,7 @@ const Chat = () => {
         <div className='chat'>
             <div className='top'>
                 <div className='user'>
-                    <img src={user?.avatar || "https://firebasestorage.googleapis.com/v0/b/reactchat-2968d.appspot.com/o/image-project%2Favatar.png?alt=media&token=a68ba9cf-5407-4d96-b4fc-9d769ebe78b8"} alt="" />
+                    <img src={user?.avatar || "default-avatar-url"} alt="" />
                     <div className='texts'>
                         <span>{user?.username}</span>
                     </div>
@@ -234,14 +205,6 @@ const Chat = () => {
                         <div className='texts'>
                             {message.img && <img src={message.img} alt="" />}
                             <p>{message.text}</p>
-                        </div>
-                        <div className='bottom'>
-                            {message.senderId === currentUser.id && (
-                                <div className='actions'>
-                                    <button onClick={() => handleEditMessage(message)} style={{ backgroundColor: 'yellow', color: '#000', width: 60, height: 30, margin: 5, display: 'none' }}>Edit</button>
-                                    <button onClick={() => handleDeleteMessage(message)} style={{ backgroundColor: 'red', color: '#fff', width: 60, height: 30, display: 'none' }}>Delete</button>
-                                </div>
-                            )}
                         </div>
                     </div>
                 ))}
@@ -268,7 +231,7 @@ const Chat = () => {
                 />
                 <div className='emoji'>
                     <img
-                        src="https://firebasestorage.googleapis.com/v0/b/reactchat-2968d.appspot.com/o/image-project%2Femoji.png?alt=media&token=847f34bd-e382-4cfa-903d-6b0fcf610b2c"
+                        src="https://firebasestorage.googleapis.com/v0/b/reactchat-2968d.appspot.com/o/image-project%2Femoji.png?alt=media&token=847f34bd-e382-4cfa-903a-b1ede46ebec3"
                         alt="emoji"
                         onClick={() => setOpen(!open)}
                     />
