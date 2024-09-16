@@ -249,15 +249,6 @@
                 display: flex;
                 gap: 20px;
 
-                &.own {
-                    align-self: flex-end;
-
-                    .texts {
-                        p {
-                            background-color: #5183fe;
-                        }
-                    }
-                }
 
                 img {
                     width: 30px;

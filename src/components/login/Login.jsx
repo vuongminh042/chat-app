@@ -53,6 +53,10 @@ const Login = () => {
     const [loadingLogin, setLoadingLogin] = useState(false);
     const [loadingSignUp, setLoadingSignUp] = useState(false);
 
+    // State for showing password
+    const [showPasswordLogin, setShowPasswordLogin] = useState(false);
+    const [showPasswordSignUp, setShowPasswordSignUp] = useState(false);
+
     // useForm for login with validation schema
     const {
         register: registerLogin,
@@ -141,11 +145,22 @@ const Login = () => {
                         {...registerLogin('email')}
                     />
                     {loginErrors.email && <p className='error-message'>{loginErrors.email.message}</p>}
-                    <input
-                        type="password"
-                        placeholder='Enter your password'
-                        {...registerLogin('password')}
-                    />
+                    <div className="password-container">
+                        <input
+                            type={showPasswordLogin ? "text" : "password"}
+                            placeholder='Enter your password'
+                            {...registerLogin('password')}
+                            style={{ width: '320px' }}
+                        />
+                        <br />
+                        <br />
+                        <button
+                            type="button"
+                            onClick={() => setShowPasswordLogin(prev => !prev)}
+                        >
+                            {showPasswordLogin ? "Hide" : "Show"}
+                        </button>
+                    </div>
                     {loginErrors.password && <p className='error-message'>{loginErrors.password.message}</p>}
                     <button type="submit" disabled={loadingLogin}>{loadingLogin ? "Loading" : "Login"}</button>
                 </form>
@@ -182,11 +197,22 @@ const Login = () => {
                         {...registerSignUp('email')}
                     />
                     {signUpErrors.email && <p className='error-message'>{signUpErrors.email.message}</p>}
-                    <input
-                        type="password"
-                        placeholder='Enter your password'
-                        {...registerSignUp('password')}
-                    />
+                    <div className="password-container">
+                        <input
+                            type={showPasswordSignUp ? "text" : "password"}
+                            placeholder='Enter your password'
+                            {...registerSignUp('password')}
+                            style={{ width: '320px' }}
+                        />
+                        <br />
+                        <br />
+                        <button
+                            type="button"
+                            onClick={() => setShowPasswordSignUp(prev => !prev)}
+                        >
+                            {showPasswordSignUp ? "Hide" : "Show"}
+                        </button>
+                    </div>
                     {signUpErrors.password && <p className='error-message'>{signUpErrors.password.message}</p>}
                     <button type="submit" disabled={loadingSignUp}>{loadingSignUp ? "Loading" : "Sign Up"}</button>
                 </form>

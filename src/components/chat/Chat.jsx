@@ -16,7 +16,7 @@ const Chat = () => {
         url: ""
     });
 
-    const [isTyping, setIsTyping] = useState(false);  // Trạng thái đang soạn tin của người dùng khác
+    const [isTyping, setIsTyping] = useState(false);
 
     const [isEditing, setIsEditing] = useState(false);
     const [editingMessage, setEditingMessage] = useState(null);
@@ -26,7 +26,6 @@ const Chat = () => {
 
     const endRef = useRef(null);
 
-    // Theo dõi khi người dùng nhập liệu và cập nhật trạng thái "đang soạn tin"
     useEffect(() => {
         const handleTyping = async () => {
             const chatRef = doc(db, "chats", chatId);
@@ -58,18 +57,17 @@ const Chat = () => {
             if (text.length > 0) {
                 handleStopTyping();
             }
-        }, 3000); // Sau 3 giây không nhập tin, chuyển trạng thái thành "không soạn tin"
+        }, 3000);
 
-        return () => clearTimeout(timeoutId); // Hủy timeout khi component bị hủy hoặc khi có sự thay đổi
+        return () => clearTimeout(timeoutId);
     }, [text, chatId, currentUser.uid]);
 
-    // Lắng nghe sự thay đổi của "isTyping" từ Firestore
+
     useEffect(() => {
         const unSub = onSnapshot(doc(db, "chats", chatId), (res) => {
             const chatData = res.data();
             setChat(chatData);
 
-            // Cập nhật trạng thái "đang soạn tin" của người dùng khác
             if (chatData?.isTyping) {
                 const typingUser = Object.values(chatData.isTyping).find(user => user.isTyping);
                 if (typingUser) {
@@ -79,7 +77,6 @@ const Chat = () => {
                 }
             }
 
-            // Đánh dấu tin nhắn đã đọc
             if (chatData?.messages?.length > 0) {
                 const unreadMessages = chatData.messages.filter(
                     (message) => message.senderId !== currentUser.id && !message.isSeen
@@ -152,7 +149,7 @@ const Chat = () => {
                 text,
                 createdAt: new Date(),
                 isSeen: false,
-                status: 'sent', // Trạng thái ban đầu là đã gửi
+                status: 'sent',
                 ...(imgUrl && { img: imgUrl })
             };
 
@@ -169,7 +166,6 @@ const Chat = () => {
                 });
             }
 
-            // Cập nhật trạng thái "đã nhận" sau 5-10 giây
             setTimeout(async () => {
                 const chatRef = doc(db, "chats", chatId);
                 const chatSnapshot = await getDoc(chatRef);
@@ -184,7 +180,7 @@ const Chat = () => {
 
                     await updateDoc(chatRef, { messages: updatedMessages });
                 }
-            }, 8000); // Thay đổi thời gian theo yêu cầu (8 giây ở đây)
+            }, 8000);
 
             const userIDs = [currentUser.id, user.id];
             userIDs.forEach(async (id) => {
@@ -240,14 +236,10 @@ const Chat = () => {
                             <p>{message.text}</p>
                         </div>
                         <div className='bottom'>
-                            <div className='status'>
-                                {message.status === 'received' && <img src="https://firebasestorage.googleapis.com/v0/b/reactchat-2968d.appspot.com/o/image-project%2Fdouble-check.png?alt=media&token=your-token-here" alt="Received" />}
-                                {message.status === 'sent' && <img src="https://firebasestorage.googleapis.com/v0/b/reactchat-2968d.appspot.com/o/image-project%2Fsingle-check.png?alt=media&token=your-token-here" alt="Sent" />}
-                            </div>
                             {message.senderId === currentUser.id && (
                                 <div className='actions'>
-                                    <button onClick={() => handleEditMessage(message)} style={{ backgroundColor: 'yellow', color: '#000', width: 60, height: 30, margin: 5 }}>Edit</button>
-                                    <button onClick={() => handleDeleteMessage(message)} style={{ backgroundColor: 'red', color: '#fff', width: 60, height: 30 }}>Delete</button>
+                                    <button onClick={() => handleEditMessage(message)} style={{ backgroundColor: 'yellow', color: '#000', width: 60, height: 30, margin: 5, display: 'none' }}>Edit</button>
+                                    <button onClick={() => handleDeleteMessage(message)} style={{ backgroundColor: 'red', color: '#fff', width: 60, height: 30, display: 'none' }}>Delete</button>
                                 </div>
                             )}
                         </div>
